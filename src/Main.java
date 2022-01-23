@@ -1,12 +1,12 @@
+import algorithm.AbstractSolver;
 import algorithm.Constraint;
-import algorithm.Solver;
-import algorithm.pickers.PickMostFrequentLetters;
+import algorithm.MostFrequentLetterSolver;
 
 import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        Solver solver = new Solver(new PickMostFrequentLetters());
+        AbstractSolver solver = new MostFrequentLetterSolver();
         String word = solver.nextSuggestion();
         System.out.println(word);
 

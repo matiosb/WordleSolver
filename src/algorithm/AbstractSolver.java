@@ -1,20 +1,23 @@
 package algorithm;
 
-import algorithm.pickers.AbstractPicker;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class Solver {
+public abstract class AbstractSolver {
     public static final List<String> WORDS = getWords();
     public static final List<String> ALLOWED_GUESSES = getAllowedGuesses();
-    private final AbstractPicker candidatePicker;
+    protected static List<String> initialCandidates = null;
+    protected List<String> candidates;
+    protected String suggestedStartWord;
 
-    public Solver(AbstractPicker picker) {
-        this.candidatePicker = picker;
+    protected AbstractSolver(String startWord) {
+        this.suggestedStartWord = startWord;
         reset();
     }
 
@@ -57,7 +60,11 @@ public class Solver {
     }
 
     public void reset() {
-        this.candidatePicker.setCandidates(new ArrayList<>(ALLOWED_GUESSES));
+        if (initialCandidates == null) {
+            initialCandidates = new ArrayList<>(ALLOWED_GUESSES);
+            sortCandidates(initialCandidates);
+        }
+        this.candidates = new ArrayList<>(initialCandidates);
     }
 
     public String nextSuggestion() {
@@ -67,13 +74,15 @@ public class Solver {
     public String nextSuggestion(Constraint constraint) {
         // First suggestion
         if (constraint == null) {
-            return this.candidatePicker.getStartWord();
+            return this.suggestedStartWord;
         }
 
         // Eliminate words
-        this.candidatePicker.getCandidates().removeIf(constraint::fails);
+        this.candidates.removeIf(constraint::fails);
 
         // Get next
-        return candidatePicker.pickNext();
+        return candidates.get(0);
     }
+
+    protected abstract void sortCandidates(List<String> candidates);
 }
