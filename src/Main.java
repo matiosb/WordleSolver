@@ -1,12 +1,12 @@
-import algorithm.AbstractSolver;
-import algorithm.Constraint;
-import algorithm.MostFrequentLetterSolver;
+import algorithms.Constraint;
+import algorithms.v2.MostFrequentLetterPicker;
+import algorithms.v2.Solver;
 
 import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        AbstractSolver solver = new MostFrequentLetterSolver();
+        Solver solver = new Solver(new MostFrequentLetterPicker());
         String word = solver.nextSuggestion();
         System.out.println(word);
 
@@ -21,6 +21,5 @@ public class Main {
             System.out.print("\tEnter constraints (e.g. XNYXX): ");
             input = s.nextLine();
         }
-
     }
 }

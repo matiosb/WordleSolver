@@ -1,4 +1,6 @@
-package algorithm;
+package algorithms.v2;
+
+import algorithms.Constraint;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,16 +11,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AbstractSolver {
+public class Solver {
     public static final List<String> WORDS = getWords();
-    public static final List<String> ALLOWED_GUESSES = getAllowedGuesses();
-    protected static List<String> initialCandidates = null;
-    protected List<String> candidates;
-    protected String suggestedStartWord;
+    public static final List<String> ALLOWED_GUESSES = WORDS;   //getAllowedGuesses();  // uncomment if all 12k words should be allowed in guesses
 
-    protected AbstractSolver(String startWord) {
-        this.suggestedStartWord = startWord;
-        reset();
+    private final AbstractCandidatePicker picker;
+    protected List<String> candidates;
+
+
+    public Solver(AbstractCandidatePicker picker) {
+        this.picker = picker;
+        this.candidates = new ArrayList<>(ALLOWED_GUESSES);
     }
 
     private static List<String> getWords() {
@@ -59,14 +62,6 @@ public abstract class AbstractSolver {
         return tries;
     }
 
-    public void reset() {
-        if (initialCandidates == null) {
-            initialCandidates = new ArrayList<>(ALLOWED_GUESSES);
-            sortCandidates(initialCandidates);
-        }
-        this.candidates = new ArrayList<>(initialCandidates);
-    }
-
     public String nextSuggestion() {
         return nextSuggestion(null);
     }
@@ -74,15 +69,13 @@ public abstract class AbstractSolver {
     public String nextSuggestion(Constraint constraint) {
         // First suggestion
         if (constraint == null) {
-            return this.suggestedStartWord;
+            return picker.startWord();
         }
 
         // Eliminate words
-        this.candidates.removeIf(constraint::fails);
+        candidates.removeIf(constraint::fails);
 
         // Get next
-        return candidates.get(0);
+        return picker.pick(candidates);
     }
-
-    protected abstract void sortCandidates(List<String> candidates);
 }

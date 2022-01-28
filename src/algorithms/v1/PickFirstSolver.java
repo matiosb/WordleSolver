@@ -1,4 +1,4 @@
-package algorithm;
+package algorithms.v1;
 
 import java.util.List;
 

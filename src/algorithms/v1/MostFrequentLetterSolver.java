@@ -1,12 +1,11 @@
-package algorithm;
+package algorithms.v1;
 
 import java.util.Comparator;
 import java.util.List;
 
 /**
- * Most Frequent Letter picker
- *     * By avg guesses: [prost={count=2315, sum=10306, min=2, average=4.451836, max=11}, clapt={count=2315, sum=10317, min=2, average=4.456587, max=10}]
- *     * By max guesses: [milds={count=2315, sum=10601, min=2, average=4.579266, max=9}, tulpa={count=2315, sum=10626, min=2, average=4.590065, max=9}]
+ * 2 Lowest average guesses:	[prost={count=2315, sum=10010, min=2, average=4.323974, max=11}, perst={count=2315, sum=10037, min=2, average=4.335637, max=11}]
+ * 2 Lowest max guesses:		[tulpa={count=2315, sum=10246, min=2, average=4.425918, max=10}, milds={count=2315, sum=10258, min=2, average=4.431102, max=10}]
  */
 public class MostFrequentLetterSolver extends AbstractSolver {
     private int[] letterFrequencies;

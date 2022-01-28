@@ -1,8 +1,9 @@
-package algorithm;
+package algorithms.v1;
+
+import algorithms.v1.AbstractSolver;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class RandomSolver extends AbstractSolver {
     public RandomSolver() {
