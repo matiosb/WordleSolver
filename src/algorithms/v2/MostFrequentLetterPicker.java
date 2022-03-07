@@ -1,8 +1,8 @@
 package algorithms.v2;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * When guessing with all allowed words:
@@ -12,26 +12,29 @@ import java.util.concurrent.ConcurrentHashMap;
  * When only guessing with answer words:
  * 2 Lowest average guesses:	[slate={count=2315, sum=8415, min=1, average=3.634989, max=9}, trace={count=2315, sum=8422, min=1, average=3.638013, max=8}]
  * 2 Lowest max guesses:		[palsy={count=2315, sum=8613, min=1, average=3.720518, max=7}, craft={count=2315, sum=8634, min=1, average=3.729590, max=7}]
+ *
+ * One-time letter frequency calculation (answer words only):
+ * 2 Lowest average guesses:	[train={count=2315, sum=8605, min=1, average=3.717063, max=9}, crane={count=2315, sum=8629, min=1, average=3.727430, max=9}]
+ * 2 Lowest max guesses:		[perch={count=2315, sum=8917, min=1, average=3.851836, max=7}, print={count=2315, sum=8642, min=1, average=3.733045, max=8}]
+ *
+ * Internle words:
+ * 2 Lowest average guesses:	[laser={count=152, sum=410, min=1, average=2.697368, max=4}, morse={count=152, sum=414, min=1, average=2.723684, max=4}]
+ * 2 Lowest max guesses:		[laser={count=152, sum=410, min=1, average=2.697368, max=4}, morse={count=152, sum=414, min=1, average=2.723684, max=4}]
  */
 public class MostFrequentLetterPicker extends AbstractCandidatePicker {
-    private static final ConcurrentHashMap<Integer, int[]> CACHE = new ConcurrentHashMap<>();
+    private static int[] INITIAL_FREQUENCIES;
+    private final int[] letterFrequencies;
 
-    private int[] letterFrequencies;
-
-    public MostFrequentLetterPicker() {
-        super("slant");
+    public MostFrequentLetterPicker(String startWord, List<String> guessWords, List<String> answerWords) {
+        super(startWord);
+        letterFrequencies = INITIAL_FREQUENCIES.clone();
     }
 
-    public MostFrequentLetterPicker(String startWord) {
-        super(startWord);
+    public static void init(List<String> answerWords) {
+        INITIAL_FREQUENCIES = calculateLetterFrequencies(answerWords);
     }
 
     private static int[] calculateLetterFrequencies(List<String> candidates) {
-        int hashcode = candidates.hashCode();
-        if (CACHE.containsKey(hashcode)) {
-            return CACHE.get(hashcode);
-        }
-
         int[] frequencies = new int[256];
         for (String w : candidates) {
             for (char c : w.toCharArray()) {
@@ -39,14 +42,13 @@ public class MostFrequentLetterPicker extends AbstractCandidatePicker {
             }
         }
 
-        CACHE.put(hashcode, frequencies);
-
         return frequencies;
     }
 
     @Override
     public String pick(List<String> candidates) {
-        letterFrequencies = calculateLetterFrequencies(candidates);
+        // To update letter frequency on every pick, uncomment
+        //letterFrequencies = calculateLetterFrequencies(candidates);
 
         return candidates
                 .stream()

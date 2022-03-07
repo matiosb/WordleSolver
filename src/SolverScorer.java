@@ -1,4 +1,3 @@
-import algorithms.v1.AbstractSolver;
 import algorithms.v2.*;
 
 import java.util.*;
@@ -8,31 +7,33 @@ import java.util.stream.Collectors;
 
 public class SolverScorer {
     public static void main(String[] args) {
-        AbstractCandidatePicker hangOn = new MostFrequentLetterPicker();
+        List<String> words = Solver.WORDS;
 
-        List<String> startWords =
-                //List.of("slant", "spade", "sepad", "perst", "plots", "clapt", "prost", "pelts", "polts", "milds", "tulpa", "arose", "arise", "named", "names");
-                //List.of("clasp", "claps");
-                //List.of("slant");
-                //List.of("perst","plots", "pelts", "polts");
-                List.of("lares");
-                //Solver.ALLOWED_GUESSES;
-        List<String> wordsToSolve = AbstractSolver.WORDS;
+        MostEliminatingPicker.init(words, words);
+        MostFrequentLetterPicker.init(words);
+
+        List<String> startWords = words;
+        List<String> answerWords = words;
+        List<String> guessWords = words;
+        Class<? extends AbstractCandidatePicker> picker =
+                MostFrequentLetterPicker.class;
+                //MostEliminatingPicker.class;
 
         long now = System.currentTimeMillis();
         Map<String, ConcurrentLinkedQueue<Integer>> startWordTries = new ConcurrentSkipListMap<>();
         startWords.forEach(startWord -> {
             startWordTries.put(startWord, new ConcurrentLinkedQueue<>());
 
-            wordsToSolve
+            answerWords
                     .stream()
                     .parallel()
                     .forEach(w -> {
-                        Solver solver =
-                                //new Solver(new NaturalOrderPicker(startWord));
-                                //new Solver(new MostFrequentLetterPicker(startWord));
-                                new Solver(new MostEliminatingPicker(startWord));
-                        startWordTries.get(startWord).add(solver.solve(w));
+                        try {
+                            Solver solver = new Solver(startWord, guessWords, answerWords, picker);
+                            startWordTries.get(startWord).add(solver.solve(w));
+                        } catch (ReflectiveOperationException e) {
+                            e.printStackTrace();
+                        }
                     }
             );
         });

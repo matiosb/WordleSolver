@@ -2,7 +2,10 @@ package algorithms.v2;
 
 import algorithms.Constraint;
 
+import java.awt.event.TextEvent;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -12,25 +15,44 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Solver {
+    public static final List<String> INTERNLE_WORDS = getInternleWords();
     public static final List<String> WORDS = getWords();
-    public static final List<String> ALLOWED_GUESSES = WORDS;   //getAllowedGuesses();  // uncomment if all 12k words should be allowed in guesses
-
+    public static final List<String> ALLOWED_GUESSES = getAllowedGuesses(WORDS);
+    private final List<String> answerWords;
+    private final List<String> guessWords;
+    private final List<String> candidates;
     private final AbstractCandidatePicker picker;
-    protected List<String> candidates;
 
+    public Solver(String startWord,
+                  List<String> guessWords,
+                  List<String> answerWords,
+                  Class<? extends AbstractCandidatePicker> pickerClass)
+            throws ReflectiveOperationException {
 
-    public Solver(AbstractCandidatePicker picker) {
-        this.picker = picker;
-        this.candidates = new ArrayList<>(ALLOWED_GUESSES);
+        Constructor<? extends AbstractCandidatePicker> ctor = pickerClass.getConstructor(
+                String.class,
+                List.class,
+                List.class
+        );
+        this.picker = ctor.newInstance(startWord, guessWords, answerWords);
+
+        this.answerWords = answerWords;
+        this.guessWords = guessWords;
+        this.candidates = new ArrayList<>(guessWords);
+    }
+
+    private static List<String> getInternleWords() {
+        return readFile("src/internle_words.txt");
     }
 
     private static List<String> getWords() {
         return readFile("src/words.txt");
     }
 
-    private static List<String> getAllowedGuesses() {
+    private static List<String> getAllowedGuesses(List<String> answerWords) {
         List<String> allowedGuesses = readFile("src/guesses.txt");
-        allowedGuesses.addAll(WORDS);
+        allowedGuesses.addAll(answerWords);
+
         allowedGuesses.sort(Comparator.naturalOrder());
         return allowedGuesses;
     }
