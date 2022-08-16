@@ -9,11 +9,11 @@ public class SolverScorer {
     public static void main(String[] args) {
         List<String> words = Solver.WORDS;
 
-        MostEliminatingPicker.init(words, words);
+        //MostEliminatingPicker.init(words, words);
         MostFrequentLetterPicker.init(words);
 
         List<String> startWords = words;
-        List<String> answerWords = words;
+        List<String> answerWords = Solver.REMAINING_ANSWERS;
         List<String> guessWords = words;
         Class<? extends AbstractCandidatePicker> picker =
                 MostFrequentLetterPicker.class;

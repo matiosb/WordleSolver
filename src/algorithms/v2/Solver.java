@@ -18,6 +18,7 @@ public class Solver {
     public static final List<String> INTERNLE_WORDS = getInternleWords();
     public static final List<String> WORDS = getWords();
     public static final List<String> ALLOWED_GUESSES = getAllowedGuesses(WORDS);
+    public static final List<String> REMAINING_ANSWERS = readFile("src/remaining_answers.txt");
     private final List<String> answerWords;
     private final List<String> guessWords;
     private final List<String> candidates;
